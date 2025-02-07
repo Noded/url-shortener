@@ -1,0 +1,9 @@
+# File requirements
+go.sum
+
+# SQLite db
+urls.db
+
+# Build dirs
+bin/
+build/

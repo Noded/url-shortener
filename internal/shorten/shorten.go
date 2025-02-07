@@ -1,4 +1,4 @@
-package main
+package shorten
 
 import (
 	"crypto/md5"
