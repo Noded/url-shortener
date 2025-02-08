@@ -7,8 +7,9 @@ import (
 	"url-shortener/internal/shorten"
 )
 
-// CreateShortURL Create new short URL and save to db
-func CreateShortURL() {
+// HandleShortenURL Create new short URL and save to db
+// Example: curl "http://localhost:8080/short?url=https://www.example.com/very/long/url/that/needs/shortening"
+func HandleShortenURL() {
 	http.HandleFunc("/short", func(w http.ResponseWriter, r *http.Request) {
 		URL := r.URL.Query().Get("url") // Getting url from request
 		if URL == "" {
@@ -17,16 +18,17 @@ func CreateShortURL() {
 		}
 
 		shortURL := shorten.ShortingURL(URL) // launch func to shorting URL
-		//	Example: curl "http://localhost:8080/short?url=https://www.example.com/very/long/url/that/needs/shortening"
 		db.AddUrl(r.URL.Query().Get("url"), shortURL)
 		w.Write([]byte(shortURL + "\n"))
 	})
 }
 
-// GetShortURLs Get list of URLs
-func GetShortURLs() {
+// HandleListURLs Get list of URLs
+//
+//	Example: curl "http://localhost:8080/list"
+func HandleListURLs() {
 	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
-		urls, err := db.GetShortURLs()
+		urls, err := db.ListShortenedURLs()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -40,10 +42,12 @@ func GetShortURLs() {
 	})
 }
 
-// GetOrigURL Returns original url from short URL
-func GetOrigURL() {
+// HandleRedirectURL Returns original url from short URL
+//
+//	Example: curl "http://localhost:8080/original?url=someShortURL"
+func HandleRedirectURL() {
 	http.HandleFunc("/original", func(w http.ResponseWriter, r *http.Request) {
-		origURL, err := db.GetOriginalURL(r.URL.Query().Get("url")) // Getting real url from short version
+		origURL, err := db.RetrieveOriginalURL(r.URL.Query().Get("url")) // Getting real url from short version
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}

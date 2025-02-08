@@ -56,8 +56,8 @@ func AddUrl(originalURL string, shortUrl string) error {
 	return nil
 }
 
-// GetOriginalURL Gets original URL from target shortURL
-func GetOriginalURL(shortURL string) (string, error) {
+// RetrieveOriginalURL Gets original URL from target shortURL
+func RetrieveOriginalURL(shortURL string) (string, error) {
 	var originalUrl string
 	err := database.QueryRow("SELECT url FROM Urls WHERE shortUrl = ?", shortURL).Scan(&originalUrl)
 	if err != nil {
@@ -66,9 +66,8 @@ func GetOriginalURL(shortURL string) (string, error) {
 	return originalUrl, nil
 }
 
-// GetShortURLs TODO: Rename this func...
-// GetShortURLs Returns all short urls
-func GetShortURLs() ([]string, error) {
+// ListShortenedURLs Returns all short urls
+func ListShortenedURLs() ([]string, error) {
 	var urls []string
 	rows, err := database.Query("SELECT shortUrl FROM Urls")
 	if err != nil {

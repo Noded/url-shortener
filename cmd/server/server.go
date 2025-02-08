@@ -17,9 +17,9 @@ func main() {
 	defer db.CloseDB()
 
 	// Register handlers
-	handlers.CreateShortURL()
-	handlers.GetShortURLs()
-	handlers.GetOrigURL()
+	handlers.HandleShortenURL()
+	handlers.HandleListURLs()
+	handlers.HandleRedirectURL()
 
 	http.ListenAndServe("localhost:8080", nil)
 }
