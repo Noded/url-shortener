@@ -30,8 +30,12 @@ func GetShortURLs() {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		for _, url := range urls {
-			w.Write([]byte(url + "\n"))
+		if urls != nil {
+			for _, url := range urls {
+				w.Write([]byte(url + "\n"))
+			}
+		} else {
+			w.Write([]byte("None\n"))
 		}
 	})
 }
