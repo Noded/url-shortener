@@ -7,7 +7,7 @@ import (
 	"url-shortener/internal/shorten"
 )
 
-// CreateShortURL Create new short url and save to db
+// CreateShortURL Create new short URL and save to db
 func CreateShortURL() {
 	http.HandleFunc("/short", func(w http.ResponseWriter, r *http.Request) {
 		URL := r.URL.Query().Get("url") // Getting url from request
@@ -16,14 +16,14 @@ func CreateShortURL() {
 			return
 		}
 
-		shortURL := shorten.ShortingURL(URL) // launch func to shorting url
-		//	example: curl "http://localhost:8080/short?url=https://www.example.com/very/long/url/that/needs/shortening"
+		shortURL := shorten.ShortingURL(URL) // launch func to shorting URL
+		//	Example: curl "http://localhost:8080/short?url=https://www.example.com/very/long/url/that/needs/shortening"
 		db.AddUrl(r.URL.Query().Get("url"), shortURL)
 		w.Write([]byte(shortURL + "\n"))
 	})
 }
 
-// GetShortURLs Get list of urls
+// GetShortURLs Get list of URLs
 func GetShortURLs() {
 	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
 		urls, err := db.GetShortURLs()
@@ -36,6 +36,7 @@ func GetShortURLs() {
 	})
 }
 
+// GetOrigURL Returns original url from short URL
 func GetOrigURL() {
 	http.HandleFunc("/original", func(w http.ResponseWriter, r *http.Request) {
 		origURL, err := db.GetOriginalURL(r.URL.Query().Get("url")) // Getting real url from short version

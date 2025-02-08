@@ -59,7 +59,7 @@ func AddUrl(originalURL string, shortUrl string) error {
 // GetOriginalURL Gets original URL from target shortURL
 func GetOriginalURL(shortURL string) (string, error) {
 	var originalUrl string
-	err := database.QueryRow("SELECT original_url FROM Urls WHERE short_url = ?", shortURL).Scan(&originalUrl)
+	err := database.QueryRow("SELECT url FROM Urls WHERE shortUrl = ?", shortURL).Scan(&originalUrl)
 	if err != nil {
 		return "", err
 	}

@@ -19,6 +19,7 @@ func main() {
 	// Register handlers
 	handlers.CreateShortURL()
 	handlers.GetShortURLs()
+	handlers.GetOrigURL()
 
 	http.ListenAndServe("localhost:8080", nil)
 }
