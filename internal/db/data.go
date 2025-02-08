@@ -38,6 +38,7 @@ func InitDB() error {
 	return nil
 }
 
+// CloseDB Close db
 func CloseDB() {
 	if database != nil {
 		_ = database.Close()
@@ -55,19 +56,8 @@ func AddUrl(originalURL string, shortUrl string) error {
 	return nil
 }
 
-// GetShortURL Gets short URL from target URL
-func GetShortURL(originalURL string) (string, error) {
-	var shortURL string
-	err := database.QueryRow("SELECT short_url FROM Urls WHERE original_url = ?",
-		originalURL).Scan(&shortURL)
-	if err != nil {
-		return "", err
-	}
-	return shortURL, nil
-}
-
-// GetOriginalUrl Gets original URL from target shortURL
-func GetOriginalUrl(shortURL string) (string, error) {
+// GetOriginalURL Gets original URL from target shortURL
+func GetOriginalURL(shortURL string) (string, error) {
 	var originalUrl string
 	err := database.QueryRow("SELECT original_url FROM Urls WHERE short_url = ?", shortURL).Scan(&originalUrl)
 	if err != nil {
