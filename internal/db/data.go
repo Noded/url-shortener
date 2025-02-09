@@ -88,7 +88,7 @@ func DeleteURL(shortURL string) error {
 	var id int
 	err := database.QueryRow("SELECT id FROM urls WHERE shortUrl = ?", shortURL).Scan(&id)
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 	_, err = database.Exec("DELETE FROM urls WHERE id = ?", id)
 	if err != nil {

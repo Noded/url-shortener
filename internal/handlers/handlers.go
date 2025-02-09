@@ -54,15 +54,17 @@ func HandleRedirectURL() {
 	})
 }
 
-// HandleDeleteURL TODO: Make delete request
+// HandleDeleteURL Delete URL
 func HandleDeleteURL() {
 	http.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
 		URL := r.URL.Query().Get("url")
 		if URL == "" {
 			http.Error(w, "URL parameter is required", http.StatusBadRequest)
 		}
-		w.Write([]byte("Deleted " + URL + "\n"))
-		db.DeleteURL(URL)
-
+		if err := db.DeleteURL(URL); err == nil {
+			w.Write([]byte("Deleted " + URL + "\n"))
+		} else {
+			http.Error(w, "URL not find", http.StatusInternalServerError)
+		}
 	})
 }
