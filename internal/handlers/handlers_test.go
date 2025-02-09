@@ -56,4 +56,23 @@ func TestHandleRedirectURL(t *testing.T) {
 	}
 }
 
-// TODO: Make test for delete handler
+func TestHandleDeleteURL(t *testing.T) {
+	db.InitDB()
+	db.AddUrl("https://example.com", "short.ly/abc")
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("DELETE", "/delete?url=short.ly/abc", nil)
+
+	handlers.HandleDeleteURL()
+	http.DefaultServeMux.ServeHTTP(w, req)
+
+	resp := w.Result()
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("expected status 200, got %d", resp.StatusCode)
+	}
+
+	if _, err := db.RetrieveOriginalURL("short.ly/abc"); err == nil {
+		t.Error("URL still exists in database after deletion")
+	}
+}
