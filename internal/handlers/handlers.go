@@ -31,8 +31,7 @@ func HandleListURLs() {
 		urls, err := db.ListShortenedURLs()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		if urls != nil {
+		} else if urls != nil {
 			for _, url := range urls {
 				w.Write([]byte(url + "\n"))
 			}
@@ -49,13 +48,8 @@ func HandleRedirectURL() {
 	http.HandleFunc("/original", func(w http.ResponseWriter, r *http.Request) {
 		origURL, err := db.RetrieveOriginalURL(r.URL.Query().Get("url")) // Getting real url from short version
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Url not find", http.StatusNotFound)
 		}
-		if origURL == "" {
-			http.Error(w, "orig URL parameter is required", http.StatusBadRequest)
-			return
-		}
-
 		w.Write([]byte(origURL + "\n"))
 	})
 }
