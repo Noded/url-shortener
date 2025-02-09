@@ -20,6 +20,7 @@ func main() {
 	handlers.HandleShortenURL()
 	handlers.HandleListURLs()
 	handlers.HandleRedirectURL()
+	handlers.HandleDeleteURL()
 
 	http.ListenAndServe("localhost:8080", nil)
 }

@@ -55,3 +55,5 @@ func TestHandleRedirectURL(t *testing.T) {
 		t.Errorf("expected status 200, got %d", resp.StatusCode)
 	}
 }
+
+// TODO: Make test for delete handler

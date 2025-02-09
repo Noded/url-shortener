@@ -18,7 +18,7 @@ func HandleShortenURL() {
 		}
 
 		shortURL := shorten.ShortingURL(URL) // launch func to shorting URL
-		db.AddUrl(r.URL.Query().Get("url"), shortURL)
+		db.AddUrl(URL, shortURL)
 		w.Write([]byte(shortURL + "\n"))
 	})
 }
@@ -48,8 +48,21 @@ func HandleRedirectURL() {
 	http.HandleFunc("/original", func(w http.ResponseWriter, r *http.Request) {
 		origURL, err := db.RetrieveOriginalURL(r.URL.Query().Get("url")) // Getting real url from short version
 		if err != nil {
-			http.Error(w, "Url not find", http.StatusNotFound)
+			http.Error(w, "URL not find", http.StatusNotFound)
 		}
 		w.Write([]byte(origURL + "\n"))
+	})
+}
+
+// HandleDeleteURL TODO: Make delete request
+func HandleDeleteURL() {
+	http.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
+		URL := r.URL.Query().Get("url")
+		if URL == "" {
+			http.Error(w, "URL parameter is required", http.StatusBadRequest)
+		}
+		w.Write([]byte("Deleted " + URL + "\n"))
+		db.DeleteURL(URL)
+
 	})
 }
