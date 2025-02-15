@@ -55,8 +55,11 @@ func HandleRedirectURL() {
 }
 
 // HandleDeleteURL Delete URL
+//
+// Example: curl "http://localhos:8080/delete?url=someYourShortURL"
 func HandleDeleteURL() {
 	http.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
+		// Getting shortURL
 		URL := r.URL.Query().Get("url")
 		if URL == "" {
 			http.Error(w, "URL parameter is required", http.StatusBadRequest)
