@@ -59,7 +59,7 @@ func AddUrl(originalURL string, shortUrl string) error {
 // RetrieveOriginalURL Gets original URL from target shortURL
 func RetrieveOriginalURL(shortURL string) (string, error) {
 	var originalUrl string
-	err := database.QueryRow("SELECT url FROM Urls WHERE shortUrl = ?", shortURL).Scan(&originalUrl)
+	err := database.QueryRow("SELECT url FROM urls WHERE shortUrl = ?", shortURL).Scan(&originalUrl)
 	if err != nil {
 		return "", err
 	}
@@ -84,15 +84,12 @@ func ListShortenedURLs() ([]string, error) {
 	return urls, nil
 }
 
+// DeleteURL Delete target URL
 func DeleteURL(shortURL string) error {
-	var id int
-	err := database.QueryRow("SELECT id FROM urls WHERE shortUrl = ?", shortURL).Scan(&id)
+	_, err := database.Exec("DELETE FROM urls WHERE shortUrl = ?", shortURL)
 	if err != nil {
 		return err
 	}
-	_, err = database.Exec("DELETE FROM urls WHERE id = ?", id)
-	if err != nil {
-		return err
-	}
-	return err
+
+	return nil
 }
