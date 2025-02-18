@@ -6,24 +6,30 @@ import (
 	"log"
 )
 
-var database *sql.DB
+type SQLStorage struct {
+	data *sql.DB
+}
+
+func NewSQLStorage() *SQLStorage {
+	return &SQLStorage{}
+}
 
 // InitDB establishes a connection to the database
 // Notice: Exec this func once in program
-func InitDB() error {
+func (s *SQLStorage) InitDB() error {
 	var err error
-	database, err = sql.Open("sqlite3", "urls.db")
+	s.data, err = sql.Open("sqlite3", "urls.db")
 	if err != nil {
 		return err
 	}
 
 	// Checking connection
-	if err := database.Ping(); err != nil {
+	if err := s.data.Ping(); err != nil {
 		return err
 	}
 
 	// Create Table if not exists
-	_, err = database.Exec(`
+	_, err = s.data.Exec(`
 		CREATE TABLE IF NOT EXISTS urls (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			shortUrl TEXT UNIQUE NOT NULL,
@@ -31,6 +37,7 @@ func InitDB() error {
 		);
 	`)
 	if err != nil {
+		log.Fatalf("error create table: %v", err)
 		return err
 	}
 
@@ -39,16 +46,16 @@ func InitDB() error {
 }
 
 // CloseDB Close db
-func CloseDB() {
-	if database != nil {
-		_ = database.Close()
+func (s *SQLStorage) CloseDB() {
+	if s.data != nil {
+		_ = s.data.Close()
 		log.Println("Database connection closed")
 	}
 }
 
 // AddUrl Adds a new URL to the database
-func AddUrl(originalURL string, shortUrl string) error {
-	_, err := database.Exec("INSERT INTO Urls (url, shortUrl) VALUES (?, ?)",
+func (s *SQLStorage) AddUrl(originalURL string, shortUrl string) error {
+	_, err := s.data.Exec("INSERT INTO Urls (url, shortUrl) VALUES (?, ?)",
 		originalURL, shortUrl)
 	if err != nil {
 		return err
@@ -57,9 +64,9 @@ func AddUrl(originalURL string, shortUrl string) error {
 }
 
 // RetrieveOriginalURL Gets original URL from target shortURL
-func RetrieveOriginalURL(shortURL string) (string, error) {
+func (s *SQLStorage) RetrieveOriginalURL(shortURL string) (string, error) {
 	var originalUrl string
-	err := database.QueryRow("SELECT url FROM urls WHERE shortUrl = ?", shortURL).Scan(&originalUrl)
+	err := s.data.QueryRow("SELECT url FROM urls WHERE shortUrl = ?", shortURL).Scan(&originalUrl)
 	if err != nil {
 		return "", err
 	}
@@ -67,9 +74,9 @@ func RetrieveOriginalURL(shortURL string) (string, error) {
 }
 
 // ListShortenedURLs Returns all short urls
-func ListShortenedURLs() ([]string, error) {
+func (s *SQLStorage) ListShortenedURLs() ([]string, error) {
 	var urls []string
-	rows, err := database.Query("SELECT shortUrl FROM Urls")
+	rows, err := s.data.Query("SELECT shortUrl FROM Urls")
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +92,8 @@ func ListShortenedURLs() ([]string, error) {
 }
 
 // DeleteURL Delete target URL
-func DeleteURL(shortURL string) error {
-	_, err := database.Exec("DELETE FROM urls WHERE shortUrl = ?", shortURL)
+func (s *SQLStorage) DeleteURL(shortURL string) error {
+	_, err := s.data.Exec("DELETE FROM urls WHERE shortUrl = ?", shortURL)
 	if err != nil {
 		return err
 	}
